@@ -76,20 +76,14 @@ Each note contains a title, content, and is linked to the authenticated user.
 
 ## 🧱 Full Stack / Technologies Used
 
-Backend
-ASP.NET Core 9 Web API
-
-Entity Framework Core 9
-
-SQL Server LocalDB
-
-ASP.NET Core Identity (email + password authentication)
-
-API Key authentication (custom implementation)
-
-AutoMapper (DTO mapping)
-
-FluentValidation (request validation)
+- ASP.NET Core 9 Web API
+- Entity Framework Core 9
+- SQL Server LocalDB
+- ASP.NET Core Identity (email + password)
+- API Key Authentication (custom)
+- AutoMapper (DTO mapping)
+- FluentValidation (request validation)
+- Swashbuckle / Swagger (API documentation)
 
 ```text
 MyOwnApi/
@@ -167,9 +161,9 @@ DTOs
 Validators
 
 Middleware (API key validation)
-```
 
-Tools
+## Tools
+
 EF Core Migrations
 
 Swagger / OpenAPI
@@ -182,8 +176,10 @@ Clone the repository
 
 Restore dependencies
 
-
+```bash
 dotnet restore
+```
+
 Apply database migrations
 
 ```bash
@@ -198,7 +194,7 @@ dotnet run
 
 Open Swagger UI in the browser
 
-[https://localhost:<port>/swagger]
+[http://localhost:5027/swagger/index.html]
 
 ### 🔐 User Registration & Login
 
@@ -224,9 +220,10 @@ required for all CRUD operations
 
 The API key must be included in the request header:
 
-Kod
 X-Api-Key: your_api_key_here
-📝 Notes Resource (CRUD)
+
+### 📝 Notes Resource (CRUD)
+
 The protected resource in this project is Notes.
 
 Each note contains:
@@ -286,5 +283,4 @@ authorization flow
 Postman Base URL
 All requests are sent to:
 
-Kod
 [http://localhost:5027]
