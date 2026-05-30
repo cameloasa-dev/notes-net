@@ -1,3 +1,6 @@
 # Ignore build output directories
 bin/
 obj/
+
+# Environment variable files
+.env*

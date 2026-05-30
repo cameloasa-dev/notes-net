@@ -51,3 +51,240 @@ Denna uppgift bedöms med IG (icke godkänd), G (godkänd) och VG (Väl Godkänt
   - Hur projektet startas.
   - Hur man registrerar en användare och får en API-nyckel.
   - Exempel på anrop till de skyddade CRUD-slutpunkterna.
+
+## 📌 Project Overview – Notes API
+
+This project is a secure Notes API built with ASP.NET Core 9.
+Users can register, log in, request an API key, and use that key to access protected CRUD endpoints for managing personal notes.
+
+The purpose of the assignment is to demonstrate:
+
+user authentication
+
+API key generation
+
+secure access to protected endpoints
+
+CRUD operations on a chosen resource
+
+clean architecture using services, repositories, DTOs, and validation
+
+database integration using Entity Framework Core and SQL Server
+
+The chosen resource for this project is Notes.
+Each note contains a title, content, and is linked to the authenticated user.
+
+## 🧱 Full Stack / Technologies Used
+
+Backend
+ASP.NET Core 9 Web API
+
+Entity Framework Core 9
+
+SQL Server LocalDB
+
+ASP.NET Core Identity (email + password authentication)
+
+API Key authentication (custom implementation)
+
+AutoMapper (DTO mapping)
+
+FluentValidation (request validation)
+
+```text
+MyOwnApi/
+│
+├── Controllers/
+│   ├── AuthController.cs
+│   ├── ApiKeyController.cs
+│   └── NotesController.cs
+│
+├── Models/
+│   ├── ApplicationUser.cs
+│   ├── ApiKey.cs
+│   └── Note.cs
+│
+├── DTOs/
+│   ├── Auth/
+│   │   ├── RegisterDto.cs
+│   │   └── LoginDto.cs
+│   ├── Notes/
+│   │   ├── NoteCreateDto.cs
+│   │   ├── NoteUpdateDto.cs
+│   │   └── NoteResponseDto.cs
+│   └── ApiKey/
+│       └── ApiKeyResponseDto.cs
+│
+├── Validators/
+│   ├── RegisterDtoValidator.cs
+│   ├── LoginDtoValidator.cs
+│   └── NoteDtoValidator.cs
+│
+├── Services/
+│   ├── Interfaces/
+│   │   ├── IAuthService.cs
+│   │   ├── IApiKeyService.cs
+│   │   └── INotesService.cs
+│   ├── AuthService.cs
+│   ├── ApiKeyService.cs
+│   └── NotesService.cs
+│
+├── Repositories/
+│   ├── Interfaces/
+│   │   ├── IApiKeyRepository.cs
+│   │   └── INotesRepository.cs
+│   ├── ApiKeyRepository.cs
+│   └── NotesRepository.cs
+│
+├── Middleware/
+│   └── ApiKeyMiddleware.cs
+│
+├── Data/
+│   └── AppDbContext.cs
+│
+├── Mappings/
+│   └── AutoMapperProfile.cs
+│
+├── appsettings.json
+├── appsettings.Development.json
+├── .env.development
+├── .env.production
+├── Program.cs
+├── MyOwnApi.csproj
+└── README.md
+```
+
+Architecture
+
+Controllers
+
+Services
+
+Repositories
+
+DTOs
+
+Validators
+
+Middleware (API key validation)
+```
+
+Tools
+EF Core Migrations
+
+Swagger / OpenAPI
+
+GitHub Classroom
+
+## 🚀 How to Run the Project
+
+Clone the repository
+
+Restore dependencies
+
+
+dotnet restore
+Apply database migrations
+
+```bash
+dotnet ef database update
+```
+
+Run the API
+
+```bash
+dotnet run
+```
+
+Open Swagger UI in the browser
+
+[https://localhost:<port>/swagger]
+
+### 🔐 User Registration & Login
+
+1. Register
+A user can register with email and password.
+The account is stored using ASP.NET Core Identity.
+
+2. Login
+The user logs in with email and password.
+After login, the user can request an API key.
+
+🔑 Requesting an API Key
+After authentication, the user can request an API key.
+The API key is:
+
+generated server-side
+
+stored in the database
+
+linked to the user
+
+required for all CRUD operations
+
+The API key must be included in the request header:
+
+Kod
+X-Api-Key: your_api_key_here
+📝 Notes Resource (CRUD)
+The protected resource in this project is Notes.
+
+Each note contains:
+
+Title
+
+Content
+
+UserId (automatically linked to the authenticated user)
+
+CRUD operations:
+Create – Add a new note
+
+Read – Retrieve notes
+
+Update – Modify an existing note
+
+Delete – Remove a note
+
+All operations require a valid API key.
+
+### 🧪 Example Requests
+
+Examples will include:
+
+Register
+
+Login
+
+Request API key
+
+CRUD operations for Notes
+
+(These will be added after implementation and testing.)
+
+### 🧪 API Testing – Postman
+
+All API functionality in this project is tested using Postman.
+Postman is used to verify:
+
+user registration
+
+user login
+
+API key generation
+
+validation of API keys
+
+CRUD operations for Notes
+
+correct HTTP status codes
+
+error handling
+
+authorization flow
+
+Postman Base URL
+All requests are sent to:
+
+Kod
+[http://localhost:5027]
