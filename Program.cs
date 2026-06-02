@@ -13,6 +13,7 @@ using MyOwnApi.Models;
 using MyOwnApi.Repositories;
 using MyOwnApi.Services;
 using MyOwnApi.Validators;
+using MyOwnApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,9 @@ builder.Services.AddFluentValidationClientsideAdapters();
 // Validators
 builder.Services.AddScoped<IValidator<RegisterDto>, RegisterDtoValidator>();
 builder.Services.AddScoped<IValidator<LoginDto>, LoginDtoValidator>();
+builder.Services.AddScoped<ApiKeyValidator>();
+builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
+
 
 // Swagger
 builder.Services.AddOpenApi();
@@ -39,11 +43,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Auth
+// Authorization and Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Authentication + Authorization
+// Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -74,8 +78,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Custom API Key Middleware
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.MapControllers();
 
