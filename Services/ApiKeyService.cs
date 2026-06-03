@@ -44,11 +44,13 @@ namespace MyOwnApi.Services
             // 3. Save in database
             await _apiKeyRepository.AddAsync(newKey);
 
-            // 4. Return the key and expiration date
+            // 4. Return the key to the user
             return new ApiKeyResponseDto
             {
                 ApiKey = newKey.Key,
-                ExpiresAt = newKey.ExpiresAt
+                ExpiresAt = newKey.ExpiresAt,
+                CreatedAt = newKey.CreatedAt,
+                UserId = newKey.UserId
             };
         }
 
