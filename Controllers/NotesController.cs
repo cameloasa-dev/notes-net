@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using MyOwnApi.DTOs;
 using MyOwnApi.Services;
 
@@ -6,6 +7,7 @@ namespace MyOwnApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[EnableRateLimiting("notesLimiter")]
 public class NotesController : ControllerBase
 {
     private readonly INotesService _notesService;

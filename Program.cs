@@ -14,6 +14,7 @@ using MyOwnApi.Repositories;
 using MyOwnApi.Services;
 using MyOwnApi.Validators;
 using MyOwnApi.Middleware;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,19 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // ---------------------------------------------------------
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// ---------------------------------------------------------
+// Rate Limiting
+// ---------------------------------------------------------
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("notesLimiter", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 5;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueLimit = 0;
+    });
+});
 
 // ---------------------------------------------------------
 // Repositories
@@ -123,6 +137,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseRateLimiter();
 }
 
 app.UseAuthentication();

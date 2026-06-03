@@ -303,8 +303,6 @@ All requests are sent to:
 
 - soft delete
 
-- rate limiting
-
 - refresh API keys
 
 - tags/categories for notes
