@@ -16,10 +16,17 @@ namespace MyOwnApi.Middleware
         {
             var path = context.Request.Path.Value?.ToLower();
 
-            // Protect only /api/notes endpoints
+            // Protect ONLY /api/notes endpoints
             if (path != null && path.StartsWith("/api/notes"))
             {
-                // 1. read API key from header
+                //  Public access for GET
+                if (context.Request.Method == "GET" && !path.Contains("/mine"))
+                {
+                    await _next(context);
+                    return;
+                }
+
+                // Protected access for  GET, POST, PUT, DELETE
                 if (!context.Request.Headers.TryGetValue(HEADER_NAME, out var extractedKey))
                 {
                     context.Response.StatusCode = 401;
@@ -27,7 +34,6 @@ namespace MyOwnApi.Middleware
                     return;
                 }
 
-                // 2. Search for API key in database
                 var apiKey = await apiKeyRepository.GetByKeyAsync(extractedKey!);
 
                 if (apiKey == null)
@@ -37,7 +43,6 @@ namespace MyOwnApi.Middleware
                     return;
                 }
 
-                // 3. Verify expiration
                 if (apiKey.ExpiresAt < DateTime.UtcNow)
                 {
                     context.Response.StatusCode = 401;
@@ -45,7 +50,7 @@ namespace MyOwnApi.Middleware
                     return;
                 }
 
-                // 4. add UserId to HttpContext
+                // Attach UserId for create/update/delete
                 context.Items["UserId"] = apiKey.UserId;
             }
 

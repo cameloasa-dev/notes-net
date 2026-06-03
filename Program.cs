@@ -17,37 +17,50 @@ using MyOwnApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ---------------------------------------------------------
 // Controllers + FluentValidation
+// ---------------------------------------------------------
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
-// Validators
-builder.Services.AddScoped<IValidator<RegisterDto>, RegisterDtoValidator>();
-builder.Services.AddScoped<IValidator<LoginDto>, LoginDtoValidator>();
-builder.Services.AddScoped<ApiKeyValidator>();
-builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
-
-
-// Swagger
-builder.Services.AddOpenApi();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+// ---------------------------------------------------------
 // DbContext
+// ---------------------------------------------------------
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+// ---------------------------------------------------------
 // Identity
+// ---------------------------------------------------------
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Authorization and Repositories
+// ---------------------------------------------------------
+// Repositories
+// ---------------------------------------------------------
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
+builder.Services.AddScoped<INotesRepository, NotesRepository>();
 
-// Authentication
+// ---------------------------------------------------------
+// Services
+// ---------------------------------------------------------
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
+builder.Services.AddScoped<INotesService, NotesService>();
+
+// ---------------------------------------------------------
+// Validators
+// ---------------------------------------------------------
+builder.Services.AddScoped<IValidator<RegisterDto>, RegisterDtoValidator>();
+builder.Services.AddScoped<IValidator<LoginDto>, LoginDtoValidator>();
+builder.Services.AddScoped<ApiKeyValidator>();
+
+// ---------------------------------------------------------
+// Authentication + Authorization
+// ---------------------------------------------------------
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -66,11 +79,21 @@ builder.Services.AddAuthentication(options =>
         )
     };
 });
+
 builder.Services.AddAuthorization();
+
+// ---------------------------------------------------------
+// Swagger
+// ---------------------------------------------------------
+builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// ---------------------------------------------------------
 // Pipeline
+// ---------------------------------------------------------
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -78,7 +101,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
