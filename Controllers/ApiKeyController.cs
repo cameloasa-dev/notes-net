@@ -16,6 +16,9 @@ namespace MyOwnApi.Controllers
             _apiKeyService = apiKeyService;
         }
 
+        // ---------------------------
+        // GENERATE API KEY
+        // ---------------------------
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> GenerateApiKey()
@@ -29,5 +32,22 @@ namespace MyOwnApi.Controllers
 
             return Ok(result);
         }
-    }
+    
+        // ---------------------------
+        // DELETE API KEY
+        // ---------------------------
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteApiKey()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("User not found.");
+
+            await _apiKeyService.DeleteApiKeyAsync(userId);
+
+            return Ok(new { message = "API Key deleted successfully" });
+        }
+    }   
 }
