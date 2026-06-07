@@ -203,6 +203,9 @@ namespace MyOwnApi.Migrations
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDone")
                         .HasColumnType("bit");
 
