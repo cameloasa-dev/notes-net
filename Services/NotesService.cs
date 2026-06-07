@@ -72,7 +72,10 @@ public class NotesService : INotesService
             Content = dto.Content,
             UserId = userId,
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            UpdatedAt = DateTime.UtcNow,
+            DueDate = dto.DueDate,
+            Priority = dto.Priority,
+            IsPinned = dto.IsPinned
         };
 
         await _notesRepository.AddAsync(note);
@@ -98,6 +101,10 @@ public class NotesService : INotesService
 
         note.Title = dto.Title;
         note.Content = dto.Content;
+        note.DueDate = dto.DueDate;
+        note.Priority = dto.Priority;
+        note.IsPinned = dto.IsPinned;
+        note.IsDone = dto.IsDone;
         note.UpdatedAt = DateTime.UtcNow;
 
         await _notesRepository.UpdateAsync(note);

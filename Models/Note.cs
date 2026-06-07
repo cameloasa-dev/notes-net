@@ -7,6 +7,9 @@ public class Note
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public bool IsDone { get; set; } = false;
+    public DateTime? DueDate { get; set; }
+    public string Priority { get; set; } = "Low"; // Low, Medium, High
+    public bool IsPinned { get; set; } = false;
 
     // Foreign key to User
     public string UserId { get; set; } = string.Empty;

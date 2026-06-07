@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-
 namespace MyOwnApi.DTOs;
 
 public class CreateNoteDto
@@ -14,6 +13,7 @@ public class CreateNoteDto
     [MaxLength(100)]
     public string Content { get; set; } = string.Empty;
 
-    [Required]
-    public bool IsDone { get; set; } = false;
+    public DateTime? DueDate { get; set; }
+    public string Priority { get; set; } = "Low"; // Low, Medium, High
+    public bool IsPinned { get; set; } = false;
 }

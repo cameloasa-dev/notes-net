@@ -200,8 +200,18 @@ namespace MyOwnApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDone")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsPinned")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()

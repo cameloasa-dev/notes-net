@@ -18,29 +18,29 @@ using MyOwnApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---------------------------------------------------------
+// ============================================================================
 // Controllers + FluentValidation
-// ---------------------------------------------------------
+// ============================================================================
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
-// ---------------------------------------------------------
+// ============================================================================
 // DbContext
-// ---------------------------------------------------------
+// ============================================================================
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-// ---------------------------------------------------------
+// ============================================================================
 // Identity
-// ---------------------------------------------------------
+// ============================================================================
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// ---------------------------------------------------------
+// ============================================================================
 // Rate Limiting
-// ---------------------------------------------------------
+// ============================================================================
 builder.Services.AddRateLimiter(options =>
 {
     options.AddFixedWindowLimiter("notesLimiter", limiterOptions =>
@@ -51,30 +51,34 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
-// ---------------------------------------------------------
+// ============================================================================
 // Repositories
-// ---------------------------------------------------------
+// ============================================================================
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
 builder.Services.AddScoped<INotesRepository, NotesRepository>();
 
-// ---------------------------------------------------------
+// ============================================================================
 // Services
-// ---------------------------------------------------------
+// ============================================================================
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
 builder.Services.AddScoped<INotesService, NotesService>();
 
-// ---------------------------------------------------------
-// Validators
-// ---------------------------------------------------------
+// ============================================================================
+// Validators (FluentValidation + Custom)
+// ============================================================================
 builder.Services.AddScoped<IValidator<RegisterDto>, RegisterDtoValidator>();
 builder.Services.AddScoped<IValidator<LoginDto>, LoginDtoValidator>();
+builder.Services.AddScoped<IValidator<CreateNoteDto>, CreateNoteDtoValidator>();
+builder.Services.AddScoped<IValidator<UpdateNoteDto>, UpdateNoteDtoValidator>();
+
+// Custom validator (NOT FluentValidation)
 builder.Services.AddScoped<ApiKeyValidator>();
 
-// ---------------------------------------------------------
+// ============================================================================
 // Authentication + Authorization (JWT)
-// ---------------------------------------------------------
+// ============================================================================
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -96,9 +100,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// ---------------------------------------------------------
+// ============================================================================
 // Swagger (JWT + API Key)
-// ---------------------------------------------------------
+// ============================================================================
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -155,9 +159,9 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// ---------------------------------------------------------
+// ============================================================================
 // Pipeline
-// ---------------------------------------------------------
+// ============================================================================
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
