@@ -13,4 +13,7 @@ public class CreateNoteDto
     [MinLength(3)]
     [MaxLength(100)]
     public string Content { get; set; } = string.Empty;
+
+    [Required]
+    public bool IsDone { get; set; } = false;
 }

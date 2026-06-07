@@ -6,6 +6,7 @@ public class Note
     public string Content { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public bool IsDone { get; set; } = false;
 
     // Foreign key to User
     public string UserId { get; set; } = string.Empty;

@@ -176,6 +176,12 @@ Restore dependencies
 dotnet restore
 ```
 
+Create database migrations
+
+```bash
+dotnet ef migrations add <MigrationName>
+```
+
 Apply database migrations
 
 ```bash

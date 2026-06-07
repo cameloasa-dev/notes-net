@@ -96,6 +96,31 @@ public class NotesController : ControllerBase
         }
     }
 
+    // ---------------------------------------------------------
+    // TOGGLE DONE (only owners can toggle their note)
+    // ---------------------------------------------------------
+    [HttpPatch("{id}/done")]
+    public async Task<ActionResult<NoteResponseDto>> ToggleDone(int id)
+    {
+        var note = await _notesService.ToggleDoneAsync(id);
+
+        if (note == null)
+            return NotFound();
+
+        var response = new NoteResponseDto
+        {
+            Id = note.Id,
+            Title = note.Title,
+            Content = note.Content,
+            IsDone = note.IsDone
+        };
+
+        return Ok(response);
+    }
+
+    // ---------------------------------------------------------
+    // GET MY NOTES (only with a valid API Key, asociated with user)
+    // ---------------------------------------------------------
     [HttpGet("mine")]
     public async Task<IActionResult> GetMyNotes()
     {

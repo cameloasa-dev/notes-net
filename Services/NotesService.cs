@@ -12,6 +12,7 @@ public interface INotesService
     Task<NoteResponseDto> UpdateAsync(int id, UpdateNoteDto dto, string userId);
     Task<bool> DeleteAsync(int id, string userId);
     Task<List<NoteResponseDto>> GetByUserIdAsync(string userId);
+    Task<Note?> ToggleDoneAsync(int id);
 }
 
 public class NotesService : INotesService
@@ -144,4 +145,19 @@ public class NotesService : INotesService
             })
             .ToList();
     }
+
+    // ---------------------------------------------------------
+    // TOGGLE DONE 
+    // ---------------------------------------------------------
+    public async Task<Note?> ToggleDoneAsync(int id)
+    {
+        var note = await _notesRepository.GetByIdAsync(id);
+        if (note == null) return null;
+
+        note.IsDone = !note.IsDone;
+        await _notesRepository.UpdateAsync(note);
+
+        return note;
+    }
+
 }
