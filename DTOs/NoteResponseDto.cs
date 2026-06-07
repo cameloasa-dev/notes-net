@@ -1,5 +1,3 @@
-namespace MyOwnApi.DTOs;
-
 public class NoteResponseDto
 {
     public int Id { get; set; }
@@ -19,7 +17,6 @@ public class NoteResponseDto
         DueDate.HasValue &&
         DueDate.Value < DateTime.UtcNow &&
         !IsDone;
-
 
     public string UserId { get; set; } = string.Empty;
 }

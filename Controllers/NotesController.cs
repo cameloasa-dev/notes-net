@@ -17,9 +17,11 @@ public class NotesController : ControllerBase
         _notesService = notesService;
     }
 
-    // ---------------------------------------------------------
-    // GET ALL NOTES (public for all users with API Key)
-    // ---------------------------------------------------------
+    // =====================================================================
+    // PUBLIC ENDPOINTS (GET)
+    // =====================================================================
+
+    // GET ALL NOTES (public, but only non-deleted)
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -27,9 +29,7 @@ public class NotesController : ControllerBase
         return Ok(notes);
     }
 
-    // ---------------------------------------------------------
-    // GET NOTE BY ID (public for all users with API Key)
-    // ---------------------------------------------------------
+    // GET NOTE BY ID (public, but only non-deleted)
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -40,9 +40,11 @@ public class NotesController : ControllerBase
         return Ok(note);
     }
 
-    // ---------------------------------------------------------
-    // CREATE NOTE (only with a valid API Key, asociated with user)
-    // ---------------------------------------------------------
+    // =====================================================================
+    // AUTHENTICATED ENDPOINTS (API KEY REQUIRED)
+    // =====================================================================
+
+    // CREATE NOTE (requires API Key)
     [HttpPost]
     public async Task<IActionResult> Create(CreateNoteDto dto)
     {
@@ -54,9 +56,7 @@ public class NotesController : ControllerBase
         return Ok(note);
     }
 
-    // ---------------------------------------------------------
-    // UPDATE NOTE (only owners can update their note)
-    // ---------------------------------------------------------
+    // UPDATE NOTE (only owner)
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, UpdateNoteDto dto)
     {
@@ -75,9 +75,7 @@ public class NotesController : ControllerBase
         }
     }
 
-    // ---------------------------------------------------------
-    // DELETE NOTE (only owners can delete their note)
-    // ---------------------------------------------------------
+    // DELETE NOTE (soft delete, only owner)
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -87,7 +85,7 @@ public class NotesController : ControllerBase
 
         try
         {
-            var deleted = await _notesService.DeleteAsync(id, userId);
+            await _notesService.DeleteAsync(id, userId);
             return Ok(new { message = "Note deleted successfully." });
         }
         catch (UnauthorizedAccessException ex)
@@ -96,39 +94,31 @@ public class NotesController : ControllerBase
         }
     }
 
-    // ---------------------------------------------------------
-    // TOGGLE DONE (only owners can toggle their note)
-    // ---------------------------------------------------------
+    // =====================================================================
+    // EXTRA FEATURES
+    // =====================================================================
+
+    // TOGGLE DONE
     [HttpPatch("{id}/done")]
     public async Task<ActionResult<NoteResponseDto>> ToggleDone(int id)
     {
-        var note = await _notesService.ToggleDoneAsync(id);
+        var response = await _notesService.ToggleDoneAsync(id);
 
-        if (note == null)
+        if (response == null)
             return NotFound();
-
-        var response = new NoteResponseDto
-        {
-            Id = note.Id,
-            Title = note.Title,
-            Content = note.Content,
-            IsDone = note.IsDone
-        };
 
         return Ok(response);
     }
 
-    // ---------------------------------------------------------
-    // GET MY NOTES (only with a valid API Key, asociated with user)
-    // ---------------------------------------------------------
+    // GET MY NOTES (requires API Key)
     [HttpGet("mine")]
     public async Task<IActionResult> GetMyNotes()
     {
-            var userId = HttpContext.Items["UserId"]?.ToString();
-            if (userId == null) return Unauthorized();
+        var userId = HttpContext.Items["UserId"]?.ToString();
+        if (userId == null)
+            return Unauthorized("API Key invalid.");
 
-            var notes = await _notesService.GetByUserIdAsync(userId);
-            return Ok(notes);
-        }
-
+        var notes = await _notesService.GetByUserIdAsync(userId);
+        return Ok(notes);
+    }
 }

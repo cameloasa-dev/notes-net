@@ -226,6 +226,18 @@ Each note contains:
 
 - UpdatedAt
 
+- IsDone
+
+- DueDate
+
+- Priority (Low, Medium, High)
+
+- IsPinned
+
+- IsDeleted (soft delete)
+
+- IsOverdue
+
 All CRUD operations require a valid API Key.
 
 ### 🧪 Example Requests
@@ -306,8 +318,6 @@ All requests are sent to:
 - pagination
 
 - search
-
-- soft delete
 
 - refresh API keys
 

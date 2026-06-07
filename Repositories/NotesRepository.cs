@@ -11,7 +11,7 @@ public interface INotesRepository
     Task<Note?> GetByIdAndUserAsync(int id, string userId);
     Task AddAsync(Note note);
     Task UpdateAsync(Note note);
-    Task DeleteAsync(Note note);
+    Task SoftDeleteAsync(Note note); 
 }
 
 public class NotesRepository : INotesRepository
@@ -26,6 +26,7 @@ public class NotesRepository : INotesRepository
     public async Task<List<Note>> GetAllAsync()
     {
         return await _context.Notes
+            .Where(n => !n.IsDeleted)                
             .OrderByDescending(n => n.CreatedAt)
             .ToListAsync();
     }
@@ -33,12 +34,14 @@ public class NotesRepository : INotesRepository
     public async Task<Note?> GetByIdAsync(int id)
     {
         return await _context.Notes
+            .Where(n => !n.IsDeleted)                 
             .FirstOrDefaultAsync(n => n.Id == id);
     }
 
     public async Task<Note?> GetByIdAndUserAsync(int id, string userId)
     {
         return await _context.Notes
+            .Where(n => !n.IsDeleted)                 
             .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
     }
 
@@ -54,9 +57,9 @@ public class NotesRepository : INotesRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(Note note)
+    public async Task SoftDeleteAsync(Note note)
     {
-        _context.Notes.Remove(note);
+        note.IsDeleted = true;                     
         await _context.SaveChangesAsync();
     }
 }
