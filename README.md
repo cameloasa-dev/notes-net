@@ -287,6 +287,10 @@ X-Api-Key: your_api_key
 {
   "title": "My note",
   "content": "Hello world"
+  "dueDate": "2026-06-08T12:07:41.498Z",
+  "priority": "string", //Low, Medium, High
+  "isPinned": true
+}
 }
 ```
 

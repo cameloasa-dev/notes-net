@@ -9,6 +9,7 @@ namespace MyOwnApi.Services
     {
         Task<ApiKeyResponseDto> GenerateApiKeyAsync(string userId);
         Task DeleteApiKeyAsync(string userId);
+        Task<ApiKeyResponseDto?> GetActiveApiKeyAsync(string userId);
     }
 
     public class ApiKeyService : IApiKeyService
@@ -57,6 +58,22 @@ namespace MyOwnApi.Services
         public async Task DeleteApiKeyAsync(string userId)
         {
             await _apiKeyRepository.DeleteByUserIdAsync(userId);
+        }
+
+        public async Task<ApiKeyResponseDto?> GetActiveApiKeyAsync(string userId)
+        {
+            var apiKey = await _apiKeyRepository.GetActiveApiKeyAsync(userId);
+
+            if (apiKey == null)
+                return null;
+
+            return new ApiKeyResponseDto
+            {
+                ApiKey = apiKey.Key,
+                CreatedAt = apiKey.CreatedAt,
+                ExpiresAt = apiKey.ExpiresAt,
+                UserId = apiKey.UserId
+            };
         }
     }
 }

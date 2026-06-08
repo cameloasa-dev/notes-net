@@ -49,5 +49,25 @@ namespace MyOwnApi.Controllers
 
             return Ok(new { message = "API Key deleted successfully" });
         }
+
+        // ---------------------------
+        // GET My API KEY
+        // ---------------------------
+        [HttpGet]
+        public async Task<IActionResult> GetMyApiKey()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "User not authenticated." });
+
+            var apiKey = await _apiKeyService.GetActiveApiKeyAsync(userId);
+
+            if (apiKey == null)
+                return NotFound(new { message = "No active API key found." });
+
+            return Ok(apiKey);
+        }
+
     }   
 }
