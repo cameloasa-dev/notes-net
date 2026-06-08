@@ -168,14 +168,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Global error handling middleware
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
+//rate limiting for notes endpoints
 app.UseRateLimiter();
 
+// Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Custom API Key Middleware
+// Custom API Key Middleware(security for API key protected endpoints)
 app.UseMiddleware<ApiKeyMiddleware>();
 
+// Controllers
 app.MapControllers();
 
 app.Run();

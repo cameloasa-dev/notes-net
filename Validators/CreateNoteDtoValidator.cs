@@ -8,12 +8,14 @@ public class CreateNoteDtoValidator : AbstractValidator<CreateNoteDto>
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title is required.")
             .MinimumLength(3).WithMessage("Title must be at least 3 characters.")
-            .MaximumLength(100).WithMessage("Title cannot exceed 100 characters.");
+            .MaximumLength(100).WithMessage("Title cannot exceed 100 characters.")
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Title cannot contain only spaces.");
 
         RuleFor(x => x.Content)
             .NotEmpty().WithMessage("Content is required.")
             .MinimumLength(3).WithMessage("Content must be at least 3 characters.")
-            .MaximumLength(100).WithMessage("Content cannot exceed 100 characters.");
+            .MaximumLength(100).WithMessage("Content cannot exceed 100 characters.")
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Content cannot contain only spaces.");
 
         RuleFor(x => x.Priority)
             .Must(p => p == "Low" || p == "Medium" || p == "High")

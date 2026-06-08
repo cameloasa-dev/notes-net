@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using MyOwnApi.Services;
 
-namespace MyOwnApi.Controllers
-{
+namespace MyOwnApi.Controllers;
+
     [ApiController]
     [Route("api/[controller]")]
     public class ApiKeyController : ControllerBase
@@ -53,21 +53,14 @@ namespace MyOwnApi.Controllers
         // ---------------------------
         // GET My API KEY
         // ---------------------------
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetMyApiKey()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized(new { message = "User not authenticated." });
-
-            var apiKey = await _apiKeyService.GetActiveApiKeyAsync(userId);
-
-            if (apiKey == null)
-                return NotFound(new { message = "No active API key found." });
+            var apiKey = await _apiKeyService.GetApiKeyAsync(userId);
 
             return Ok(apiKey);
-        }
-
-    }   
+        }    
 }

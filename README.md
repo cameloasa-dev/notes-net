@@ -249,8 +249,11 @@ Examples will include:
 ```json
 POST /api/auth/register
 {
+  "firstName": "First",
+  "lastName": "Last",
   "email": "test@example.com",
-  "password": "Test123!"
+  "password": "Example123!",
+  "confirmPassword":"Example123!"
 }
 ```
 
@@ -273,7 +276,6 @@ Response:
 {
   "apiKey": "xxxxxxxxxxxxxxxxxxxx",
   "createdAt": "...",
-  "expiresAt": "...",
   "userId": "..."
 }
 ```
@@ -286,12 +288,12 @@ X-Api-Key: your_api_key
 ```json
 {
   "title": "My note",
-  "content": "Hello world"
+  "content": "Hello world",
   "dueDate": "2026-06-08T12:07:41.498Z",
   "priority": "string", //Low, Medium, High
   "isPinned": true
 }
-}
+
 ```
 
 ## 🧪 API Testing – Postman
@@ -322,7 +324,5 @@ All requests are sent to:
 - pagination
 
 - search
-
-- refresh API keys
 
 - tags/categories for notes

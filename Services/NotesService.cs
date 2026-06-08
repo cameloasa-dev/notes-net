@@ -1,20 +1,19 @@
+using FluentValidation;
 using MyOwnApi.DTOs;
+using MyOwnApi.Exceptions;
 using MyOwnApi.Models;
 using MyOwnApi.Repositories;
-
 namespace MyOwnApi.Services;
-
 public interface INotesService
 {
     Task<List<NoteResponseDto>> GetAllAsync();
     Task<List<NoteResponseDto>> GetByUserIdAsync(string userId);
-    Task<NoteResponseDto?> GetByIdAsync(int id);
+    Task<NoteResponseDto> GetByIdAsync(int id);
     Task<NoteResponseDto> CreateAsync(CreateNoteDto dto, string userId);
     Task<NoteResponseDto> UpdateAsync(int id, UpdateNoteDto dto, string userId);
-    Task<bool> DeleteAsync(int id, string userId);
-    Task<NoteResponseDto?> ToggleDoneAsync(int id);
+    Task DeleteAsync(int id, string userId);
+    Task<NoteResponseDto> ToggleDoneAsync(int id);
 }
-
 public class NotesService : INotesService
 {
     private readonly INotesRepository _notesRepository;
@@ -25,12 +24,11 @@ public class NotesService : INotesService
     }
 
     // =====================================================================
-    // GET ALL NOTES (non-deleted)
+    // GET ALL NOTES
     // =====================================================================
     public async Task<List<NoteResponseDto>> GetAllAsync()
     {
         var notes = await _notesRepository.GetAllAsync();
-
         return notes.Select(MapToDto).ToList();
     }
 
@@ -48,12 +46,15 @@ public class NotesService : INotesService
     }
 
     // =====================================================================
-    // GET NOTE BY ID (non-deleted)
+    // GET NOTE BY ID
     // =====================================================================
-    public async Task<NoteResponseDto?> GetByIdAsync(int id)
+    public async Task<NoteResponseDto> GetByIdAsync(int id)
     {
         var note = await _notesRepository.GetByIdAsync(id);
-        return note == null ? null : MapToDto(note);
+        if (note == null)
+            throw new NotFoundException("Note not found.");
+
+        return MapToDto(note);
     }
 
     // =====================================================================
@@ -79,13 +80,13 @@ public class NotesService : INotesService
     }
 
     // =====================================================================
-    // UPDATE NOTE (ownership check)
+    // UPDATE NOTE
     // =====================================================================
     public async Task<NoteResponseDto> UpdateAsync(int id, UpdateNoteDto dto, string userId)
     {
         var note = await _notesRepository.GetByIdAndUserAsync(id, userId);
         if (note == null)
-            throw new UnauthorizedAccessException("You are not the owner of this note.");
+            throw new ForbiddenException("You are not the owner of this note.");
 
         note.Title = dto.Title;
         note.Content = dto.Content;
@@ -101,32 +102,32 @@ public class NotesService : INotesService
     }
 
     // =====================================================================
-    // DELETE NOTE (soft delete)
+    // DELETE NOTE
     // =====================================================================
-    public async Task<bool> DeleteAsync(int id, string userId)
+    public async Task DeleteAsync(int id, string userId)
     {
         var note = await _notesRepository.GetByIdAndUserAsync(id, userId);
         if (note == null)
-            throw new UnauthorizedAccessException("You are not the owner of this note.");
+            throw new ForbiddenException("You are not the owner of this note.");
 
         await _notesRepository.SoftDeleteAsync(note);
-        return true;
     }
 
     // =====================================================================
     // TOGGLE DONE
     // =====================================================================
-    public async Task<NoteResponseDto?> ToggleDoneAsync(int id)
+    public async Task<NoteResponseDto> ToggleDoneAsync(int id)
     {
         var note = await _notesRepository.GetByIdAsync(id);
-        if (note == null) return null;
+        if (note == null)
+            throw new NotFoundException("Note not found.");
 
         note.IsDone = !note.IsDone;
         note.UpdatedAt = DateTime.UtcNow;
 
         await _notesRepository.UpdateAsync(note);
 
-        return MapToDto(note); // <-- acum e corect
+        return MapToDto(note);
     }
 
     // =====================================================================

@@ -1,7 +1,7 @@
 using MyOwnApi.Repositories;
 
-namespace MyOwnApi.Middleware
-{
+namespace MyOwnApi.Middleware;
+
     public class ApiKeyMiddleware
     {
         private readonly RequestDelegate _next;
@@ -43,13 +43,6 @@ namespace MyOwnApi.Middleware
                     return;
                 }
 
-                if (apiKey.ExpiresAt < DateTime.UtcNow)
-                {
-                    context.Response.StatusCode = 401;
-                    await context.Response.WriteAsync("API Key expired");
-                    return;
-                }
-
                 // Attach UserId for create/update/delete
                 context.Items["UserId"] = apiKey.UserId;
             }
@@ -57,4 +50,4 @@ namespace MyOwnApi.Middleware
             await _next(context);
         }
     }
-}
+

@@ -1,8 +1,8 @@
 using FluentValidation;
 using MyOwnApi.Repositories;
 
-namespace MyOwnApi.Validators
-{
+namespace MyOwnApi.Validators;
+
     public class ApiKeyValidator : AbstractValidator<string>
     {
         public ApiKeyValidator(IApiKeyRepository apiKeyRepository)
@@ -17,14 +17,10 @@ namespace MyOwnApi.Validators
                     if (existingKey == null)
                         return true;
 
-                    // if API Key exists but is EXPIRED → valid
-                    if (existingKey.ExpiresAt < DateTime.UtcNow)
-                        return true;
-
                     // if API Key exists and is ACTIVE → invalid
                     return false;
                 })
                 .WithMessage("User already has an active API key.");
         }
     }
-}
+

@@ -10,7 +10,7 @@ namespace MyOwnApi.Repositories
         Task<ApiKey?> GetByKeyAsync(string key);
         Task AddAsync(ApiKey apiKey);
         Task DeleteByUserIdAsync(string userId);
-        Task<ApiKey?> GetActiveApiKeyAsync(string userId);
+        
     }
 
     public class ApiKeyRepository : IApiKeyRepository
@@ -47,11 +47,5 @@ namespace MyOwnApi.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ApiKey?> GetActiveApiKeyAsync(string userId)
-        {
-            return await _context.ApiKeys
-                .Where(k => k.UserId == userId && k.ExpiresAt > DateTime.UtcNow)
-                .FirstOrDefaultAsync();
-        }
     }
 }

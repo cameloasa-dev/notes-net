@@ -25,7 +25,16 @@ namespace MyOwnApi.Controllers
             var result = await _authService.RegisterAsync(dto);
 
             if (!result.Succeeded)
-                return BadRequest(result.Errors);
+            {
+                var errors = result.Errors.Select(e => e.Description).ToArray();
+
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Registration failed.",
+                    errors
+                });
+            }
 
             return Ok(new { Message = "User registered successfully." });
         }
@@ -37,9 +46,6 @@ namespace MyOwnApi.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var response = await _authService.LoginAsync(dto);
-
-            if (response == null)
-                return Unauthorized(new { Message = "Invalid email or password." });
 
             return Ok(response);
         }
