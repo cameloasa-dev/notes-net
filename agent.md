@@ -7,6 +7,34 @@ It uses JWT authentication for user identity and API Keys for resource‑level a
 
 The API is designed for secure, multi‑user environments where each user can only access their own notes.
 
+## Registration
+
+1. Register
+POST /api/auth/register
+
+Register a user
+
+- Request
+
+```json
+{
+  "firstName": "User",
+  "lastName": "Example",
+  "email": "test@example.com",
+  "password": "Example123!",
+  "confirmPassword":"Example123!"
+}
+```
+
+- Response
+
+```json
+{
+   "message": "User registered successfully."
+}
+
+```
+
 ## Authentication
 
 1. Login
@@ -28,7 +56,11 @@ Authenticates a user and returns a JWT token.
 ```json
 {
   "token": "jwt-token-here",
-  "expiresAt": "2026-06-08T12:00:00Z"
+  "expiresAt": "2026-06-08T12:00:00Z",
+  "userId": "uuid",
+  "email": "testuser@test.com",
+  "firstName": "string",
+  "lastName": "string"
 }
 ```
 
@@ -49,6 +81,7 @@ Response
 ```
 
 3. API Key Flow
+
 3.1 Generate API Key
 POST /api/apikey
 
@@ -92,9 +125,9 @@ If no key exists:
 4. Notes Module
 All Notes endpoints require:
 
-JWT in Authorization: Bearer [<token>]
+JWT in Authorization: Bearer [token]
 
-API Key in X-Api-Key: [<key>]
+API Key in X-Api-Key: [key]
 
 4.1 Get All Notes
 GET /api/notes
@@ -180,49 +213,38 @@ Deletes the note.
 5. DTO Definitions
 
 5.1 CreateNoteDto
-title (string, required, 3–100 chars, no whitespace-only)
 
-content (string, required, no whitespace-only)
+- title (string, required, 3–100 chars, no whitespace-only)
 
-dueDate (DateTime?, optional)
+- content (string, required, no whitespace-only)
 
-priority (Low, Medium, High)
+- dueDate (DateTime?, optional)
 
-isPinned (bool)
+- priority (Low, Medium, High)
+
+- isPinned (bool)
 
 5.2 UpdateNoteDto
 Same as CreateNoteDto, plus:
 
-isDone (bool)
+- isDone (bool)
 
 6. Validation Rules
 
-Title
+**Title**
 Required
-
 Min 3, max 100
-
 Cannot be whitespace-only
 
-Content
+**Content**
 Required
-
 Cannot be whitespace-only
 
-Priority
-Allowed values:
+**Priority**
+Allowed values:Low,Medium,High
 
-Low
-
-Medium
-
-High
-
-Case-insensitive.
-
-DueDate
+**DueDate**
 Must be a valid ISO date
-
 Optional
 
 7. Error Handling
@@ -255,20 +277,15 @@ Used for business logic conflicts (e.g., email already exists).
 8. Security Requirements
 Every Notes endpoint requires:
 
-Kod
-Authorization: Bearer [<jwt>]
-X-Api-Key: [<api-key>]
+- Authorization: Bearer [jwt]
+- X-Api-Key: [api-key]
 Both must be valid.
 
 9. Example Workflow
-Login → receive JWT
 
-Generate API Key
-
-Create notes
-
-Update notes
-
-Toggle notes
-
-Delete notes
+- Login → receive JWT
+- Generate API Key
+- Create notes
+- Update notes
+- Toggle notes
+- Delete notes
